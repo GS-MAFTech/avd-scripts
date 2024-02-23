@@ -1,18 +1,16 @@
 Set-ExecutionPolicy Bypass
-$CheckADCReg = Get-ItemProperty HKLM:\Software\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall\* | where {$_.DisplayName -like "Adobe Acrobat Reader DC*"}
-If ($CheckADCReg -eq $null) {
-$Installdir = "c:\temp\install_adobe"
-New-Item -Path $Installdir  -ItemType directory
+# Define the URL for the Adobe Reader download
+$AdobeReaderUrl = "https://ardownload2.adobe.com/pub/adobe/acrobat/win/AcrobatDC/2300320269/AcroRdrDCx642300320269_en_US.exe"
 
-$source = "ftp://ftp.adobe.com/pub/adobe/reader/win/AcrobatDC/2001320064/AcroRdrDC2001320064_en_US.exe"
-$destination = "$Installdir\AcroRdrDC2001320064_en_US.exe"
-Invoke-WebRequest $source -OutFile $destination
+# Define the path where you want to save the downloaded installer
+$InstallerPath = "$env:TEMP\AdobeReaderInstaller.exe"
 
+# Download the Adobe Reader installer
+Invoke-WebRequest -Uri $AdobeReaderUrl -OutFile $InstallerPath
 
-Start-Process -FilePath "$Installdir\AcroRdrDC2001320064_en_US.exe" -ArgumentList "/sAll /rs /rps /msi /norestart /quiet EULA_ACCEPT=YES"
+# Install Adobe Reader silently
+Start-Process -FilePath $InstallerPath -ArgumentList "/sAll" -Wait
 
-Start-Sleep -s 240
+# Remove the downloaded installer
+Remove-Item $InstallerPath
 
-
-rm -Force $Installdir\AcroRdrDC*
-}
