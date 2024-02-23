@@ -1,3 +1,4 @@
+Set-ExecutionPolicy Bypass
 $CheckADCReg = Get-ItemProperty HKLM:\Software\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall\* | where {$_.DisplayName -like "Adobe Acrobat Reader DC*"}
 If ($CheckADCReg -eq $null) {
 $Installdir = "c:\temp\install_adobe"
